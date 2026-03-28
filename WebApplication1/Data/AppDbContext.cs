@@ -22,7 +22,7 @@ namespace WebApplication1.Data
                 .HasMany(a => a.ToDos)
                 .WithOne(t => t.Project)
                 .HasForeignKey(t => t.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
 
             // create relation project with user as project lead. One project can only have one user as lead.
@@ -39,7 +39,7 @@ namespace WebApplication1.Data
                 .HasMany(t => t.Projects)
                 .WithOne(p => p.Team)
                 .HasForeignKey(p => p.ProjectTeamId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             // create relation between users and teams as a team lead. User can have more than one team
             // when user is being deleted, team related to that user also being deleted
@@ -49,33 +49,41 @@ namespace WebApplication1.Data
                 .HasForeignKey(t => t.TeamLeader)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // declare has key for project user junction
+            modelBuilder.Entity<ProjectUserJunction>()
+                .HasKey(puj => new {puj.UserId, puj.ProjectId});
+
             // create relation on Project User Junction, to user model as one to many
             modelBuilder.Entity<ProjectUserJunction>()
                 .HasOne(puj => puj.User)
                 .WithMany(u => u.ProjectUsersJunction)
                 .HasForeignKey(puj => puj.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             // create relation on Project User Junction, to project model as on to many
             modelBuilder.Entity<ProjectUserJunction>()
                 .HasOne(puj => puj.Project)
                 .WithMany(p => p.ProjectUserJunctions)
                 .HasForeignKey(puj => puj.ProjectId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // declare has key for team user junction
+            modelBuilder.Entity<TeamUserJunction>()
+                .HasKey(tuj => new { tuj.UserId, tuj.TeamId });
 
             // create relation on TeamUserJunction, to team model as one to many
             modelBuilder.Entity<TeamUserJunction>()
                 .HasOne(tuj => tuj.Team)
                 .WithMany(t => t.TeamUserJunction)
                 .HasForeignKey(tuj => tuj.TeamId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             // create rekation on TeamUserJunction, to user model as one to many
             modelBuilder.Entity<TeamUserJunction>()
                 .HasOne(tuj => tuj.User)
                 .WithMany(u => u.TeamUsersJunction)
                 .HasForeignKey(tuj => tuj.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);
         }
