@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using WebApplication1;
 using WebApplication1.Data;
 using WebApplication1.Models;
+using WebApplication1.Services;
+using WebApplication1.Services.IServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,11 @@ builder.Services.AddIdentity<UserModel, IdentityRole>().AddEntityFrameworkStores
 IMapper mapper = Mappingconfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+// service dependency section
+builder.Services.AddScoped<IProjectService, ProjectService>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

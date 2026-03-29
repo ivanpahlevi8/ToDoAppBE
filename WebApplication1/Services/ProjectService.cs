@@ -28,6 +28,8 @@ namespace WebApplication1.Services
                 // create map from dto into project
                 ProjectModel project = _mapper.Map<ProjectModel>(projectDto);
 
+                project.CreatedAt = DateTime.Now;
+
                 await _dbContext.Projects.AddAsync(project);
 
                 await _dbContext.SaveChangesAsync();
