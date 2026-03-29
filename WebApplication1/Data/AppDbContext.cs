@@ -13,6 +13,8 @@ namespace WebApplication1.Data
         public DbSet<TeamModel> Teams { get; set; }
         public DbSet<ToDoModel> ToDo { get; set; }
         public DbSet<UserModel> User { get; set; }
+        public DbSet<TeamUserJunction> TeamUserJunction { get; set; }
+        public DbSet<ProjectUserJunction> ProjectUserJunction { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

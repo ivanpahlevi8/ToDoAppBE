@@ -12,5 +12,7 @@ namespace WebApplication1.Models.Dtos
         public string TeamLeader { get; set; }
 
         public DateTime CreatedAt { get; set; }
+
+        public List<UserDto>? UserMember { get; set; }
     }
 }

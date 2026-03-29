@@ -19,6 +19,8 @@ namespace WebApplication1
 
                 // create mappging from category to category dto
                 config.CreateMap<ToDoModel, ToDoDto>().ReverseMap();
+
+                config.CreateMap<UserModel, UserDto>().ReverseMap();
             });
 
             return mapperConfiguration;
