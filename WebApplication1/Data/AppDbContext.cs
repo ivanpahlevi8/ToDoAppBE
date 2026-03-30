@@ -15,6 +15,7 @@ namespace WebApplication1.Data
         public DbSet<UserModel> User { get; set; }
         public DbSet<TeamUserJunction> TeamUserJunction { get; set; }
         public DbSet<ProjectUserJunction> ProjectUserJunction { get; set; }
+        public DbSet <ConnectionModel> Connections { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -85,6 +86,20 @@ namespace WebApplication1.Data
                 .HasOne(tuj => tuj.User)
                 .WithMany(u => u.TeamUsersJunction)
                 .HasForeignKey(tuj => tuj.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // create relation on connection, to user as many to one
+            modelBuilder.Entity<ConnectionModel>()
+                .HasOne(c => c.UserOwner)
+                .WithMany(u => u.OwnedConnection)
+                .HasForeignKey(c => c.UserOwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // create relation on connection, to user as many to one for user connected
+            modelBuilder.Entity<ConnectionModel>()
+                .HasOne(c => c.UserConnection)
+                .WithMany(u => u.RequestedConnection)
+                .HasForeignKey(c => c.UserConnectionId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);

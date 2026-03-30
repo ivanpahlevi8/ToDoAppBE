@@ -19,5 +19,11 @@ namespace WebApplication1.Models
 
         // relation to many with TeamUserJunction
         public List<TeamUserJunction> TeamUsersJunction { get; set;}
+
+        // relation to many with owned connection
+        public List<ConnectionModel> OwnedConnection {  get; set; }
+
+        // relation to many with requested connection
+        public List<ConnectionModel> RequestedConnection { get; set; }
     }
 }

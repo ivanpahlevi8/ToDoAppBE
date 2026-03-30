@@ -21,6 +21,8 @@ namespace WebApplication1
                 config.CreateMap<ToDoModel, ToDoDto>().ReverseMap();
 
                 config.CreateMap<UserModel, UserDto>().ReverseMap();
+
+                config.CreateMap<ConnectionDto, ConnectionModel>().ReverseMap();
             });
 
             return mapperConfiguration;

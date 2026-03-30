@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebApplication1.Migrations
 {
     /// <inheritdoc />
-    public partial class Fixmigrationerrors : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -157,6 +157,34 @@ namespace WebApplication1.Migrations
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Connections",
+                columns: table => new
+                {
+                    ConnectionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserOwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserConnectionId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ConnectionStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Connections", x => x.ConnectionId);
+                    table.ForeignKey(
+                        name: "FK_Connections_AspNetUsers_UserConnectionId",
+                        column: x => x.UserConnectionId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Connections_AspNetUsers_UserOwnerId",
+                        column: x => x.UserOwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -322,6 +350,16 @@ namespace WebApplication1.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Connections_UserConnectionId",
+                table: "Connections",
+                column: "UserConnectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Connections_UserOwnerId",
+                table: "Connections",
+                column: "UserOwnerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Projects_ProjectTeamId",
                 table: "Projects",
                 column: "ProjectTeamId");
@@ -369,6 +407,9 @@ namespace WebApplication1.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "Connections");
 
             migrationBuilder.DropTable(
                 name: "ProjectUserJunction");

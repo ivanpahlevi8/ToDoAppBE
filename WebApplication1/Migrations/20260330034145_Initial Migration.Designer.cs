@@ -12,8 +12,8 @@ using WebApplication1.Data;
 namespace WebApplication1.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260328190018_Fix migration errors")]
-    partial class Fixmigrationerrors
+    [Migration("20260330034145_Initial Migration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -156,6 +156,38 @@ namespace WebApplication1.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("WebApplication1.Models.ConnectionModel", b =>
+                {
+                    b.Property<int>("ConnectionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConnectionId"));
+
+                    b.Property<string>("ConnectionStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserConnectionId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserOwnerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("ConnectionId");
+
+                    b.HasIndex("UserConnectionId");
+
+                    b.HasIndex("UserOwnerId");
+
+                    b.ToTable("Connections");
                 });
 
             modelBuilder.Entity("WebApplication1.Models.ProjectModel", b =>
@@ -417,6 +449,25 @@ namespace WebApplication1.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebApplication1.Models.ConnectionModel", b =>
+                {
+                    b.HasOne("WebApplication1.Models.UserModel", "UserConnection")
+                        .WithMany("RequestedConnection")
+                        .HasForeignKey("UserConnectionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WebApplication1.Models.UserModel", "UserOwner")
+                        .WithMany("OwnedConnection")
+                        .HasForeignKey("UserOwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UserConnection");
+
+                    b.Navigation("UserOwner");
+                });
+
             modelBuilder.Entity("WebApplication1.Models.ProjectModel", b =>
                 {
                     b.HasOne("WebApplication1.Models.TeamModel", "Team")
@@ -511,9 +562,13 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.UserModel", b =>
                 {
+                    b.Navigation("OwnedConnection");
+
                     b.Navigation("ProjectUsersJunction");
 
                     b.Navigation("Projects");
+
+                    b.Navigation("RequestedConnection");
 
                     b.Navigation("TeamUsersJunction");
 
