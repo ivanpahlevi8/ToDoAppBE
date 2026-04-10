@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+https://go.microsoft.com/fwlink/?LinkID=208121.
+-->
+<Project>
+  <PropertyGroup>
+    <_PublishTargetUrl>E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\WebApplication1\bin\Release\net8.0\publish\</_PublishTargetUrl>
+    <History>True|2026-04-10T01:08:30.8519384Z;True|2026-04-06T11:47:25.4132754+07:00;True|2026-04-06T11:40:58.8934839+07:00;True|2026-04-06T11:29:26.4211007+07:00;True|2026-04-06T11:23:17.3077082+07:00;True|2026-04-06T11:20:31.0778050+07:00;True|2026-04-06T09:55:15.8833655+07:00;True|2026-04-06T09:49:16.5576278+07:00;True|2026-04-06T09:44:00.4868580+07:00;True|2026-04-06T07:37:32.0281125+07:00;</History>
+    <LastFailureDetails />
+  </PropertyGroup>
+</Project>

@@ -10,6 +10,12 @@ namespace WebApplication1.Services.IServices
         // function to read object by id
         public Task<ResponseDto> GetProjectById(int projectId);
 
+        // function to get all project based on user lead
+        public Task<ResponseDto> GetProjectByUserLead(string userId);
+
+        // function to get all project based on user member
+        public Task<ResponseDto> GetProjectByUserMember(string userId);
+
         // function to read all project
         public Task<ResponseDto> GetAllProject();
 
@@ -18,5 +24,8 @@ namespace WebApplication1.Services.IServices
 
         // function to delete project
         public Task<ResponseDto> DeleteProject(int projectId);
+
+        // function to get all todo within project
+        public Task<ResponseDto> GetProjectToDos(int projecyId);
     }
 }

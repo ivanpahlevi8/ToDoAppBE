@@ -43,5 +43,19 @@ namespace WebApplication1.Controllers
 
             return Ok(responseDto);
         }
+
+        [HttpGet]
+        [Route("get-username")]
+        public async Task<IActionResult> GetUsername(string userName)
+        {
+            ResponseDto responseDto = await _authService.GetUserByUsername(userName);
+
+            if (!responseDto.IsSuccess)
+            {
+                return BadRequest(responseDto);
+            }
+
+            return Ok(responseDto);
+        }
     }
 }

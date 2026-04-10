@@ -17,7 +17,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        [Route("/create-team")]
+        [Route("create-team")]
         public async Task<IActionResult> CreateTeam([FromBody] TeamDto teamDto)
         {
             ResponseDto responseDto = await _teamService.CreateTeam(teamDto);
@@ -31,7 +31,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
-        [Route("/get-team")]
+        [Route("get-team")]
         public async Task<IActionResult> GetTeam(int teamId)
         {
             ResponseDto responseDto = await _teamService.GetTeam(teamId);
@@ -45,7 +45,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
-        [Route("/get-all-team")]
+        [Route("get-all-team")]
         public async Task<IActionResult> GetAllTeam()
         {
             ResponseDto responseDto = await _teamService.GetAllTeam();
@@ -59,7 +59,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
-        [Route("/get-team-member")]
+        [Route("get-team-member")]
         public async Task<IActionResult> GetTeamMember(int teamId)
         {
             ResponseDto responseDto = await _teamService.GetAllTeamMember(teamId);
@@ -73,7 +73,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPut]
-        [Route("/update-team")]
+        [Route("update-team")]
         public async Task<IActionResult> UpdateTeam([FromBody] TeamDto teamDto)
         {
             ResponseDto responseDto = await _teamService.UpdateTeam(teamDto);
@@ -87,7 +87,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpDelete]
-        [Route("/delete-team")]
+        [Route("delete-team")]
         public async Task<IActionResult> DeleteTeam(int teamId)
         {
             ResponseDto responseDto = await _teamService.DeleteTeam(teamId);
@@ -101,7 +101,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        [Route("/assign-user-team")]
+        [Route("assign-user-team")]
         public async Task<IActionResult> AssignUserTeam(string userId, int teamId)
         {
             ResponseDto responseDto = await _teamService.AssignUserToTeam(userId, teamId);
@@ -115,7 +115,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        [Route("/unassign-user-team")]
+        [Route("unassign-user-team")]
         public async Task<IActionResult> UnassignUserTeam(string userId, int teamId)
         {
             ResponseDto responseDto = await _teamService.UnAssignedUserToTeam(userId, teamId);

@@ -17,7 +17,7 @@ namespace WebApplication1.Models
 
         public string ProjectStatus { get; set; }
 
-        // relation to many with project
+        // relation to many with project team if exist
         public int? ProjectTeamId { get; set; }
         public TeamModel? Team { get; set; }
 

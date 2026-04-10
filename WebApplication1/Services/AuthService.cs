@@ -23,6 +23,37 @@ namespace WebApplication1.Services
             _responseDto = new ResponseDto();
         }
 
+        public async Task<ResponseDto> GetUserByUsername(string username)
+        {
+            try
+            {
+                UserModel? userModel = await _dbContext.User.FirstOrDefaultAsync(u => u.UserName == username);
+
+                if(userModel == null)
+                {
+                    _responseDto.Message = $"User with id {username} is not exist";
+                    _responseDto.IsSuccess = false;
+
+                    return _responseDto;
+                }
+
+                _responseDto.Message = "Success get user by username";
+                _responseDto.Result = userModel;
+                _responseDto.IsSuccess = true;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
         public async Task<ResponseDto> LoginUser(LoginUserDto loginUserDto)
         {
             try

@@ -175,5 +175,94 @@ namespace WebApplication1.Services
                 return _responseDto;
             }
         }
+
+        public async Task<ResponseDto> GetProjectToDos(int projectId)
+        {
+            try
+            {
+                ProjectModel? getProject = await _dbContext.Projects.Include(p => p.ToDos).FirstOrDefaultAsync(p => p.ProjectId == projectId);
+
+                if(getProject == null)
+                {
+                    _responseDto.IsSuccess = false;
+                    _responseDto.Message = $"Project with id {projectId} is not exist";
+                    _responseDto.Result = getProject;
+
+                    return _responseDto;
+                }
+
+                ProjectDto projectDto = _mapper.Map<ProjectDto>(getProject);
+                projectDto.ToDos = getProject.ToDos;
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success get project todo";
+                _responseDto.Result = projectDto;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
+        public async Task<ResponseDto> GetProjectByUserLead(string userId)
+        {
+            try
+            {
+                IEnumerable<ProjectModel> allProject = await _dbContext.Projects.Where(p => p.ProjectUserLeadId == userId).ToListAsync();
+
+                IEnumerable<ProjectDto> projectDto = _mapper.Map<IEnumerable<ProjectDto>>(allProject);
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success get project by user lead";
+                _responseDto.Result = projectDto;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
+        public async Task<ResponseDto> GetProjectByUserMember(string userId)
+        {
+            try
+            {
+                // get all junction project user by user id
+                List<ProjectUserJunction> allUserJunction = await _dbContext.ProjectUserJunction.Include(puj => puj.Project).Where(puj => puj.UserId == userId).ToListAsync();
+
+                // get all project from junction
+                List<ProjectModel> allProject = allUserJunction.Select(puj => puj.Project).ToList();
+
+                List<ProjectDto> allProjectDto = _mapper.Map<List<ProjectDto>>(allProject);
+
+                _responseDto.IsSuccess=true;
+                _responseDto.Message = "Success getting project based on user id";
+                _responseDto.Result = allProjectDto;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
     }
 }

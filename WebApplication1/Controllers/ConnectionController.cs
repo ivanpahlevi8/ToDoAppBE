@@ -16,7 +16,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPost]
-        [Route("/send-connection")]
+        [Route("send-connection")]
         public async Task<IActionResult> SendConnection([FromBody] ConnectionDto connectionDto)
         {
             ResponseDto response = await _connectionService.SendConnection(connectionDto);
@@ -30,7 +30,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpPut]
-        [Route("/accept-connection")]
+        [Route("accept-connection")]
         public async Task<IActionResult> AcceptConnection(int connectionId)
         {
             ResponseDto response = await _connectionService.AcceptConnection(connectionId);
@@ -44,7 +44,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
-        [Route("/get-request-connection")]
+        [Route("get-request-connection")]
         public async Task<IActionResult> GetRequestConnection(string requesterId)
         {
             ResponseDto response = await _connectionService.GetRequestedConnection(requesterId);
@@ -58,7 +58,7 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
-        [Route("/get-all-connection")]
+        [Route("get-all-connection")]
         public async Task<IActionResult> GetAllConnection(string userId)
         {
             ResponseDto response = await _connectionService.GetAllConnectionUser(userId);

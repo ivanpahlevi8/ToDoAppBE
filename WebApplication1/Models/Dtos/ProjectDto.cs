@@ -11,6 +11,7 @@ namespace WebApplication1.Models.Dtos
         public string ProjectUserLeadId { get; set; }
         public string ProjectStatus { get; set; }
         public int? ProjectTeamId { get; set; }
+        public List<ToDoModel> ToDos { get; set; }
         public DateTime CreatedAt { get; set; }
 
     }
