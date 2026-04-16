@@ -7,5 +7,6 @@ namespace WebApplication1.Services.IServices
         public Task<ResponseDto> RegisterUser(RegisterUserDto registerUserDto);
         public Task<ResponseDto> LoginUser(LoginUserDto loginUserDto);
         public Task<ResponseDto> GetUserByUsername(string username);
+        public Task<ResponseDto> GetUserById(string userId);
     }
 }

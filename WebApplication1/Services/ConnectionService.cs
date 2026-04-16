@@ -137,5 +137,166 @@ namespace WebApplication1.Services
                 return _responseDto;
             }
         }
+
+        public async Task<ResponseDto> UnconnectUser(string connectionId)
+        {
+            try
+            {
+                ConnectionModel? getConnection = await _dbContext.Connections.FirstOrDefaultAsync(c => c.ConnectionId == Int32.Parse(connectionId));
+
+                if(getConnection == null)
+                {
+                    _responseDto.IsSuccess = false;
+                    _responseDto.Message = $"Connection with id : {connectionId} is not exist";
+
+                    return _responseDto;
+                }
+
+                getConnection.ConnectionStatus = SD.CONNECTION_DISCONNECT_STATUS;
+                
+                _dbContext.Update(getConnection);
+
+                await _dbContext.SaveChangesAsync();
+
+                UserModel? getUser = _dbContext.User.FirstOrDefault(u => u.Id == getConnection.UserConnectionId);
+
+                if (getUser == null)
+                {
+                    _responseDto.IsSuccess = false;
+                    _responseDto.Message = $"User with id : {getConnection.UserConnectionId} is not exist";
+
+                    return _responseDto;
+                }
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "";
+                _responseDto.Result = $"Disconnect with user : {getUser.UserName}";
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
+        public async Task<ResponseDto> DeclinedConnection(string connectionId)
+        {
+            try
+            {
+                ConnectionModel? getConnection = await _dbContext.Connections.FirstOrDefaultAsync(c => c.ConnectionId == Int32.Parse(connectionId));
+
+                if (getConnection == null)
+                {
+                    _responseDto.IsSuccess = false;
+                    _responseDto.Message = $"Connection with id : {connectionId} is not exist";
+
+                    return _responseDto;
+                }
+
+                getConnection.ConnectionStatus = SD.CONNECTION_REJECT_STATUS;
+
+                _dbContext.Update(getConnection);
+
+                await _dbContext.SaveChangesAsync();
+
+                UserModel? getUser = _dbContext.User.FirstOrDefault(u => u.Id == getConnection.UserConnectionId);
+
+                if (getUser == null)
+                {
+                    _responseDto.IsSuccess = false;
+                    _responseDto.Message = $"User with id : {getConnection.UserConnectionId} is not exist";
+
+                    return _responseDto;
+                }
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "";
+                _responseDto.Result = $"Declined user : {getUser.UserName} connection request";
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
+        public async Task<ResponseDto> GetAllConnectRejectByToUser(string userId, bool isByUser)
+        {
+            try
+            {
+                List<ConnectionModel> connections;
+
+                if(isByUser)
+                {
+                    connections = await _dbContext.Connections.Where(c => c.UserOwnerId == userId && c.ConnectionStatus == SD.CONNECTION_REJECT_STATUS).ToListAsync();
+                } else
+                {
+                    connections = await _dbContext.Connections.Where(c => c.UserConnectionId == userId && c.ConnectionStatus == SD.CONNECTION_REJECT_STATUS).ToListAsync();
+                }
+
+                List<ConnectionDto> connectionDtoList = _mapper.Map<List<ConnectionDto>>(connections);
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success get all connection rejected";
+                _responseDto.Result = connectionDtoList;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
+        public async Task<ResponseDto> GetAllDisconnectByToUser(string userId, bool isByUser)
+        {
+            try
+            {
+                List<ConnectionModel> connections;
+
+                if (isByUser)
+                {
+                    connections = await _dbContext.Connections.Where(c => c.UserOwnerId == userId && c.ConnectionStatus == SD.CONNECTION_DISCONNECT_STATUS).ToListAsync();
+                }
+                else
+                {
+                    connections = await _dbContext.Connections.Where(c => c.UserConnectionId == userId && c.ConnectionStatus == SD.CONNECTION_DISCONNECT_STATUS).ToListAsync();
+                }
+
+                List<ConnectionDto> connectionDtoList = _mapper.Map<List<ConnectionDto>>(connections);
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success get all connection disconnect";
+                _responseDto.Result = connectionDtoList;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
     }
 }

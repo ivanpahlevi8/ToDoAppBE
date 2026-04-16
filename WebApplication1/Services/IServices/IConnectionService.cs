@@ -13,5 +13,10 @@ namespace WebApplication1.Services.IServices
         public Task<ResponseDto> GetRequestedConnection(string requesterId);
 
         public Task<ResponseDto> GetAllConnectionUser(string userId);
+
+        public Task<ResponseDto> UnconnectUser(string connectionId);
+        public Task<ResponseDto> DeclinedConnection(string connectionId);
+        public Task<ResponseDto> GetAllConnectRejectByToUser(string userId, bool isByUser);
+        public Task<ResponseDto> GetAllDisconnectByToUser(string userId, bool isByUser);
     }
 }

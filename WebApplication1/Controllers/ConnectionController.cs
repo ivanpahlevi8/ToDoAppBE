@@ -70,5 +70,89 @@ namespace WebApplication1.Controllers
 
             return Ok(response);
         }
+
+        [HttpPut]
+        [Route("unconnect-user")]
+        public async Task<IActionResult> UnconnectUser(string connectionId)
+        {
+            ResponseDto response = await _connectionService.UnconnectUser(connectionId);
+
+            if (!response.IsSuccess)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpPut]
+        [Route("declined-connection")]
+        public async Task<IActionResult> DeclinedConnection(string connectionId)
+        {
+            ResponseDto response = await _connectionService.DeclinedConnection(connectionId);
+
+            if (!response.IsSuccess)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("connection-rejected-byuser")]
+        public async Task<IActionResult> ConnectionRejectedByUser(string userId)
+        {
+            ResponseDto response = await _connectionService.GetAllConnectRejectByToUser(userId, true);
+
+            if (!response.IsSuccess)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("connection-reject-touser")]
+        public async Task<IActionResult> ConnectionRejectToUser(string userId)
+        {
+            ResponseDto response = await _connectionService.GetAllConnectRejectByToUser(userId, false);
+
+            if (!response.IsSuccess)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("connection-disconnected-byuser")]
+        public async Task<IActionResult> ConnectionDisconnectedByUser(string userId)
+        {
+            ResponseDto response = await _connectionService.GetAllDisconnectByToUser(userId, true);
+
+            if (!response.IsSuccess)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("connection-disconnect-touser")]
+        public async Task<IActionResult> ConnectionDisconnectToUser(string userId)
+        {
+            ResponseDto response = await _connectionService.GetAllDisconnectByToUser(userId, false);
+
+            if (!response.IsSuccess)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
     }
 }

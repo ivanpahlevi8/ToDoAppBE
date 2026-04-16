@@ -57,5 +57,19 @@ namespace WebApplication1.Controllers
 
             return Ok(responseDto);
         }
+
+        [HttpGet]
+        [Route("get-userid")]
+        public async Task<IActionResult> GetUserById(string userId)
+        {
+            ResponseDto responseDto = await _authService.GetUserById(userId);
+
+            if (!responseDto.IsSuccess)
+            {
+                return BadRequest(responseDto);
+            }
+
+            return Ok(responseDto);
+        }
     }
 }
