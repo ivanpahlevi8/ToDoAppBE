@@ -54,6 +54,8 @@ namespace WebApplication1.Services
         {
             try
             {
+                teamDto.CreatedAt = DateTime.Now;
+
                 TeamModel teamModel = _mapper.Map<TeamModel>(teamDto);
 
                 await _dbContext.Teams.AddAsync(teamModel);
@@ -113,13 +115,22 @@ namespace WebApplication1.Services
             }
         }
 
-        public async Task<ResponseDto> GetAllTeam()
+        public async Task<ResponseDto> GetAllTeam(string userId)
         {
             try
             {
-                IEnumerable<TeamModel> getAllTeamModel = await _dbContext.Teams.ToListAsync();
+                // get all team when user be a leader
+                List<TeamModel> teamWhereUserLeader = await _dbContext.Teams.Where(t => t.TeamLeader == userId).ToListAsync();
 
-                IEnumerable<TeamDto> alLTeamDto = _mapper.Map<IEnumerable<TeamDto>>(getAllTeamModel);
+                // get all team when user is be a member
+                IEnumerable<TeamUserJunction> getTeamUserJunction = await _dbContext.TeamUserJunction.Include(tuj => tuj.Team).Where(tuj => tuj.UserId == userId).ToListAsync();
+
+                List<TeamModel> teamWhereUserMember = getTeamUserJunction.Select(tuj => tuj.Team).ToList();
+
+                // combine
+                List<TeamModel> combinedData = teamWhereUserLeader.Concat(teamWhereUserMember).ToList();
+
+                IEnumerable<TeamDto> alLTeamDto = _mapper.Map<IEnumerable<TeamDto>>(combinedData);
 
                 _responseDto.IsSuccess = true;
                 _responseDto.Message = "Success get all team";
@@ -184,7 +195,7 @@ namespace WebApplication1.Services
         {
             try
             {
-                TeamModel? getTeamModel = await _dbContext.Teams.FirstOrDefaultAsync(t => t.TeamId == teamId);
+                TeamModel? getTeamModel = await _dbContext.Teams.Include(t => t.TeamUserJunction).ThenInclude(tuj => tuj.User).FirstOrDefaultAsync(t => t.TeamId == teamId);
 
                 if(getTeamModel == null)
                 {
@@ -194,7 +205,10 @@ namespace WebApplication1.Services
                     return _responseDto;
                 }
 
+                List<UserModel> teamUserMember = getTeamModel.TeamUserJunction.Select(tuj => tuj.User).ToList();
+
                 TeamDto teamDto = _mapper.Map<TeamDto>(getTeamModel);
+                teamDto.UserMember = _mapper.Map<List<UserDto>>(teamUserMember);
 
                 _responseDto.IsSuccess = true;
                 _responseDto.Message = "Success get team by id";

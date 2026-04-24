@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebApplication1.Models.Dtos;
 using WebApplication1.Services.IServices;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WebApplication1.Controllers
 {
@@ -44,8 +45,8 @@ namespace WebApplication1.Controllers
         }
 
         [HttpGet]
-        [Route("get-request-connection")]
-        public async Task<IActionResult> GetRequestConnection(string requesterId)
+        [Route("get-requested-connection")]
+        public async Task<IActionResult> GetRequestedConnection(string requesterId)
         {
             ResponseDto response = await _connectionService.GetRequestedConnection(requesterId);
 
@@ -146,6 +147,48 @@ namespace WebApplication1.Controllers
         public async Task<IActionResult> ConnectionDisconnectToUser(string userId)
         {
             ResponseDto response = await _connectionService.GetAllDisconnectByToUser(userId, false);
+
+            if (!response.IsSuccess)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpDelete]
+        [Route("remove-connection")]
+        public async Task<IActionResult> RemoveConnection(int connectionId)
+        {
+            ResponseDto response = await _connectionService.DeleteConnection(connectionId);
+
+            if (!response.IsSuccess)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("get-reques-connection")]
+        public async Task<IActionResult> GetRequestConnection(string userId)
+        {
+            ResponseDto response = await _connectionService.GetAllRequestConnection(userId);
+
+            if (!response.IsSuccess)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("get-is-connected")]
+        public async Task<IActionResult> GetIsConnected(string userId, string userConnectedId)
+        {
+            ResponseDto response = await _connectionService.IsConnectedWithUser(userId, userConnectedId);
 
             if (!response.IsSuccess)
             {

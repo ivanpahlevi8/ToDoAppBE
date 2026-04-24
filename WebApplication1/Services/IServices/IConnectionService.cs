@@ -18,5 +18,8 @@ namespace WebApplication1.Services.IServices
         public Task<ResponseDto> DeclinedConnection(string connectionId);
         public Task<ResponseDto> GetAllConnectRejectByToUser(string userId, bool isByUser);
         public Task<ResponseDto> GetAllDisconnectByToUser(string userId, bool isByUser);
+        public Task<ResponseDto> DeleteConnection(int connectionId);
+        public Task<ResponseDto> GetAllRequestConnection(string userId);
+        public Task<ResponseDto> IsConnectedWithUser(string userId, string connectedUserId);
     }
 }

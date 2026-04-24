@@ -46,9 +46,9 @@ namespace WebApplication1.Controllers
 
         [HttpGet]
         [Route("get-all-team")]
-        public async Task<IActionResult> GetAllTeam()
+        public async Task<IActionResult> GetAllTeam(string userId)
         {
-            ResponseDto responseDto = await _teamService.GetAllTeam();
+            ResponseDto responseDto = await _teamService.GetAllTeam(userId);
 
             if (!responseDto.IsSuccess)
             {

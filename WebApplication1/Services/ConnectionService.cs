@@ -62,7 +62,7 @@ namespace WebApplication1.Services
         {
             try
             {
-                IEnumerable<ConnectionModel> allConnection = await _dbContext.Connections.Where(c => c.UserOwnerId == userId || c.UserConnectionId == userId).ToListAsync();
+                IEnumerable<ConnectionModel> allConnection = await _dbContext.Connections.Where(c => (c.UserOwnerId == userId || c.UserConnectionId == userId) && c.ConnectionStatus == SD.CONNECTION_CONNECT_STATUS).ToListAsync();
 
                 IEnumerable<ConnectionDto> allConnectionDto = _mapper.Map<IEnumerable<ConnectionDto>>(allConnection);
 
@@ -87,7 +87,7 @@ namespace WebApplication1.Services
         {
             try
             {
-                IEnumerable<ConnectionModel> allRequestedConnection = await _dbContext.Connections.Where(c => c.UserConnectionId == requesterId).Where(c => c.ConnectionStatus == SD.CONNECTION_FOLLOW_STATUS).ToListAsync();
+                IEnumerable<ConnectionModel> allRequestedConnection = await _dbContext.Connections.Where(c => c.UserConnectionId == requesterId && c.ConnectionStatus == SD.CONNECTION_FOLLOW_STATUS).ToListAsync();
 
                 IEnumerable<ConnectionDto> connectionDtos = _mapper.Map<IEnumerable<ConnectionDto>>(allRequestedConnection);
 
@@ -168,9 +168,11 @@ namespace WebApplication1.Services
                     return _responseDto;
                 }
 
+                ConnectionDto connectionDto = _mapper.Map<ConnectionDto>(getConnection);
+
                 _responseDto.IsSuccess = true;
-                _responseDto.Message = "";
-                _responseDto.Result = $"Disconnect with user : {getUser.UserName}";
+                _responseDto.Message = $"Disconnect with user : {getUser.UserName}";
+                _responseDto.Result = connectionDto;
 
                 return _responseDto;
             }
@@ -215,9 +217,11 @@ namespace WebApplication1.Services
                     return _responseDto;
                 }
 
+                ConnectionDto connectionDto = _mapper.Map<ConnectionDto>(getConnection);
+
                 _responseDto.IsSuccess = true;
-                _responseDto.Message = "";
-                _responseDto.Result = $"Declined user : {getUser.UserName} connection request";
+                _responseDto.Message = $"Declined user : {getUser.UserName} connection request";
+                _responseDto.Result = connectionDto;
 
                 return _responseDto;
             }
@@ -285,6 +289,100 @@ namespace WebApplication1.Services
                 _responseDto.IsSuccess = true;
                 _responseDto.Message = "Success get all connection disconnect";
                 _responseDto.Result = connectionDtoList;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
+        public async Task<ResponseDto> DeleteConnection(int connectionId)
+        {
+            try
+            {
+                ConnectionModel? getConnection = await _dbContext.Connections.FirstOrDefaultAsync(c => c.ConnectionId == connectionId);
+
+                if(getConnection == null)
+                {
+                    _responseDto.IsSuccess = false;
+                    _responseDto.Message = $"connection with id {connectionId} is not exist";
+                    _responseDto.Result = $"connection with id {connectionId} is not exist";
+
+                    return _responseDto;
+                }
+
+                var resulConnection = getConnection;
+
+                _dbContext.Connections.Remove(getConnection);
+
+                await _dbContext.SaveChangesAsync();
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success remove data";
+                _responseDto.Result = resulConnection;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
+        public async Task<ResponseDto> GetAllRequestConnection(string userId)
+        {
+            try
+            {
+                IEnumerable<ConnectionModel> getAllConnection = await _dbContext.Connections.Where(c => c.UserOwnerId == userId && c.ConnectionStatus == SD.CONNECTION_FOLLOW_STATUS).ToListAsync();
+
+                IEnumerable<ConnectionDto> connectionDtos = _mapper.Map<IEnumerable<ConnectionDto>>(getAllConnection);
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success get all connection request";
+                _responseDto.Result = connectionDtos;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
+        public async Task<ResponseDto> IsConnectedWithUser(string userId, string connectedUserId)
+        {
+            try
+            {
+                ConnectionModel? connection = await _dbContext.Connections.FirstOrDefaultAsync(c => (c.UserOwnerId == userId && c.UserConnectionId == connectedUserId) || (c.UserOwnerId == connectedUserId && c.UserConnectionId == userId));
+
+                if (connection == null)
+                {
+                    _responseDto.Message = "No Connection";
+                    _responseDto.Result = false;
+                } else
+                {
+                    _responseDto.Message = "Has Connection";
+                    _responseDto.Result = true;
+                }
+
+                _responseDto.IsSuccess = true;
 
                 return _responseDto;
             }

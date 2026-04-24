@@ -9,7 +9,7 @@ namespace WebApplication1.Services.IServices
 
         public Task<ResponseDto> GetTeam(int teamId);
 
-        public Task<ResponseDto> GetAllTeam();
+        public Task<ResponseDto> GetAllTeam(string userId);
 
         public Task<ResponseDto> UpdateTeam(TeamDto teamDto);
 
