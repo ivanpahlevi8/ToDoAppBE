@@ -9,7 +9,7 @@ using WebApplication1.Services.IServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(c =>
 {
     // Hardcode the production server right into the generator
     c.AddServer(new Microsoft.OpenApi.Models.OpenApiServer
@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
         Url = "https://ivan-portofolio.xyz/todoapp",
         Description = "Production Server"
     });
-});*/
+});
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -46,6 +46,11 @@ builder.Services.AddScoped<ITeamService, TeamService>();
 builder.Services.AddScoped<IConnectionService, ConnectionService>();
 
 builder.Services.AddScoped<ITodoService, ToDoService>();
+
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -205,10 +205,12 @@ namespace WebApplication1.Services
                     return _responseDto;
                 }
 
-                List<UserModel> teamUserMember = getTeamModel.TeamUserJunction.Select(tuj => tuj.User).ToList();
+                List<UserModel> userMemberModel = getTeamModel.TeamUserJunction.Select(tuj => tuj.User).ToList();
+
+                List<UserDto> userMemberDto = _mapper.Map<List<UserDto>>(userMemberModel);
 
                 TeamDto teamDto = _mapper.Map<TeamDto>(getTeamModel);
-                teamDto.UserMember = _mapper.Map<List<UserDto>>(teamUserMember);
+                teamDto.UserMember = userMemberDto;
 
                 _responseDto.IsSuccess = true;
                 _responseDto.Message = "Success get team by id";
