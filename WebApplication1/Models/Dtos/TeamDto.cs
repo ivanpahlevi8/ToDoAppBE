@@ -14,5 +14,7 @@ namespace WebApplication1.Models.Dtos
         public DateTime? CreatedAt { get; set; }
 
         public List<UserDto>? UserMember { get; set; }
+
+        public List<TeamRoleDto>? RoleMember { get; set; }
     }
 }
