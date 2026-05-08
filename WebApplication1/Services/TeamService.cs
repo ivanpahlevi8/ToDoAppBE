@@ -20,14 +20,29 @@ namespace WebApplication1.Services
             _responseDto = new ResponseDto();
         }
 
-        public async Task<ResponseDto> AssignUserToTeam(string userId, int teamId)
+        public async Task<ResponseDto> AssignUserToTeam(string userId, int teamId, string roleName)
         {
             try
             {
+                // create team role first
+                TeamRoleModel teamRole = new TeamRoleModel
+                {
+                    RoleName = roleName,
+                    TeamId = teamId,
+                    CreatedAt = DateTime.Now,
+                };
+
+                _dbContext.TeamRoles.Add(teamRole);
+
+                await _dbContext.SaveChangesAsync();
+
+                var teamRoleId = teamRole.TeamRoleId;
+
                 TeamUserJunction teamUserJunction = new TeamUserJunction
                 {
                     UserId = userId,
                     TeamId = teamId,
+                    TeamRoleId = teamRoleId,
                 };
 
                 await _dbContext.TeamUserJunction.AddAsync(teamUserJunction);
@@ -195,7 +210,12 @@ namespace WebApplication1.Services
         {
             try
             {
-                TeamModel? getTeamModel = await _dbContext.Teams.Include(t => t.TeamUserJunction).ThenInclude(tuj => tuj.User).FirstOrDefaultAsync(t => t.TeamId == teamId);
+                TeamModel? getTeamModel = await _dbContext.Teams
+                    .Include(t => t.TeamUserJunction)
+                        .ThenInclude(tuj => tuj.User)
+                    .Include(t => t.TeamUserJunction)
+                        .ThenInclude(tuj=> tuj.TeamRole)
+                    .FirstOrDefaultAsync(t => t.TeamId == teamId);
 
                 if(getTeamModel == null)
                 {

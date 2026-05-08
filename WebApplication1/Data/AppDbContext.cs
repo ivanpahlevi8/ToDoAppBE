@@ -16,6 +16,7 @@ namespace WebApplication1.Data
         public DbSet<TeamUserJunction> TeamUserJunction { get; set; }
         public DbSet<ProjectUserJunction> ProjectUserJunction { get; set; }
         public DbSet <ConnectionModel> Connections { get; set; }
+        public DbSet<TeamRoleModel> TeamRoles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -86,6 +87,13 @@ namespace WebApplication1.Data
                 .HasOne(tuj => tuj.User)
                 .WithMany(u => u.TeamUsersJunction)
                 .HasForeignKey(tuj => tuj.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // create relation on team TeamUserJunction, to team role model as on to many
+            modelBuilder.Entity<TeamUserJunction>()
+                .HasOne(tuj => tuj.TeamRole)
+                .WithMany(tr => tr.TeamUserJunction)
+                .HasForeignKey(tuj => tuj.TeamRoleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             // create relation on connection, to user as many to one

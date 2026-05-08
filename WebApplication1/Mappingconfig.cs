@@ -23,6 +23,8 @@ namespace WebApplication1
                 config.CreateMap<UserModel, UserDto>().ReverseMap();
 
                 config.CreateMap<ConnectionDto, ConnectionModel>().ReverseMap();
+
+                config.CreateMap<TeamRoleModel, TeamRoleDto>().ReverseMap();
             });
 
             return mapperConfiguration;

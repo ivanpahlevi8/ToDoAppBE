@@ -102,9 +102,9 @@ namespace WebApplication1.Controllers
 
         [HttpPost]
         [Route("assign-user-team")]
-        public async Task<IActionResult> AssignUserTeam(string userId, int teamId)
+        public async Task<IActionResult> AssignUserTeam(string userId, int teamId, string roleName)
         {
-            ResponseDto responseDto = await _teamService.AssignUserToTeam(userId, teamId);
+            ResponseDto responseDto = await _teamService.AssignUserToTeam(userId, teamId, roleName);
 
             if (!responseDto.IsSuccess)
             {

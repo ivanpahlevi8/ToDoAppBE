@@ -7,5 +7,8 @@
 
         public string UserId { get; set; }
         public UserModel User { get; set; }
+
+        public int TeamRoleId { get; set; }
+        public TeamRoleModel TeamRole { get; set; }
     }
 }

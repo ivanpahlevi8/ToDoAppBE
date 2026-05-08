@@ -15,7 +15,7 @@ namespace WebApplication1.Services.IServices
 
         public Task<ResponseDto> DeleteTeam(int teamId);
 
-        public Task<ResponseDto> AssignUserToTeam(string userId, int teamId);
+        public Task<ResponseDto> AssignUserToTeam(string userId, int teamId, string roleName);
 
         public Task<ResponseDto> UnAssignedUserToTeam(string userId, int teamId);
 
