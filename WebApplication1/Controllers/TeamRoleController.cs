@@ -11,6 +11,11 @@ namespace WebApplication1.Controllers
     {
         private readonly ITeamRoleService _teamRoleService;
 
+        public TeamRoleController(ITeamRoleService teamRoleService)
+        {
+            _teamRoleService = teamRoleService;
+        }
+
         [HttpPost]
         [Route("create-teamrole")]
         public async Task<IActionResult> CreateTeamRole([FromBody] TeamRoleDto teamRoleDto)

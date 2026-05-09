@@ -47,6 +47,8 @@ builder.Services.AddScoped<IConnectionService, ConnectionService>();
 
 builder.Services.AddScoped<ITodoService, ToDoService>();
 
+builder.Services.AddScoped<ITeamRoleService, TeamRoleService>();
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
