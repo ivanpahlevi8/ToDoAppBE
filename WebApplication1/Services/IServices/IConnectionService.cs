@@ -21,5 +21,6 @@ namespace WebApplication1.Services.IServices
         public Task<ResponseDto> DeleteConnection(int connectionId);
         public Task<ResponseDto> GetAllRequestConnection(string userId);
         public Task<ResponseDto> IsConnectedWithUser(string userId, string connectedUserId);
+        public Task<ResponseDto> SearchConnectionByName(string name, string userid);
     }
 }

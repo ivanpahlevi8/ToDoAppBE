@@ -197,5 +197,19 @@ namespace WebApplication1.Controllers
 
             return Ok(response);
         }
+
+        [HttpGet]
+        [Route("search-connection")]
+        public async Task<IActionResult> SearchConnection(string name, string userId)
+        {
+            ResponseDto response = await _connectionService.SearchConnectionByName(name, userId);
+
+            if (!response.IsSuccess)
+            {
+                return BadRequest(response);
+            }
+
+            return Ok(response);
+        }
     }
 }

@@ -68,6 +68,12 @@ namespace WebApplication1.Services
                     return _responseDto;
                 }
 
+                // get all user junction with those role
+                IEnumerable<TeamUserJunction> allTeamUserJunction = await _dbContext.TeamUserJunction.Where(tuj => tuj.TeamRoleId == teamRoleId).ToListAsync();
+
+                // delete all team user junction
+                _dbContext.RemoveRange(allTeamUserJunction);
+
                 _dbContext.Remove(teamRoleModel);
 
                 await _dbContext.SaveChangesAsync();

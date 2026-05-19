@@ -20,24 +20,10 @@ namespace WebApplication1.Services
             _responseDto = new ResponseDto();
         }
 
-        public async Task<ResponseDto> AssignUserToTeam(string userId, int teamId, string roleName)
+        public async Task<ResponseDto> AssignUserToTeam(string userId, int teamId, int teamRoleId)
         {
             try
             {
-                // create team role first
-                TeamRoleModel teamRole = new TeamRoleModel
-                {
-                    RoleName = roleName,
-                    TeamId = teamId,
-                    CreatedAt = DateTime.Now,
-                };
-
-                _dbContext.TeamRoles.Add(teamRole);
-
-                await _dbContext.SaveChangesAsync();
-
-                var teamRoleId = teamRole.TeamRoleId;
-
                 TeamUserJunction teamUserJunction = new TeamUserJunction
                 {
                     UserId = userId,

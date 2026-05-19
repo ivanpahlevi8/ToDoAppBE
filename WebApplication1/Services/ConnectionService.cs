@@ -396,5 +396,45 @@ namespace WebApplication1.Services
                 return _responseDto;
             }
         }
+
+        public async Task<ResponseDto> SearchConnectionByName(string name, string userid)
+        {
+            try
+            {
+                // get all connection where it contain user id
+                IEnumerable<ConnectionModel> getAllConnection = await _dbContext.Connections.Include(c => c.UserOwner).Include(c => c.UserConnection)
+                    .Where(c => (c.UserConnectionId == userid || c.UserOwnerId ==  userid) && c.ConnectionStatus == SD.CONNECTION_CONNECT_STATUS).ToListAsync();
+                
+                // filter again where the user owner or user conenction is contain name
+                IEnumerable<ConnectionModel> searchConnectionUser = getAllConnection
+                    .Where(
+                    g => 
+                        ((g.UserOwner.FirstName.Contains(name) ||
+                        g.UserOwner.LastName.Contains(name) ||
+                        g.UserOwner.UserName.Contains(name)) && g.UserOwnerId != userid) ||
+                        ((g.UserConnection.FirstName.Contains(name) ||
+                        g.UserConnection.LastName.Contains(name) ||
+                        g.UserConnection.UserName.Contains(name)) && g.UserConnectionId != userid) 
+                    ).ToList();
+
+                // cast into dto
+                IEnumerable<ConnectionDto> searchConnectionUserDto = _mapper.Map<IEnumerable<ConnectionDto>>(searchConnectionUser);
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success search connection with name " + name;
+                _responseDto.Result = searchConnectionUserDto;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
     }
 }
