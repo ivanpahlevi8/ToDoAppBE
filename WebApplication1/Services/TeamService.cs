@@ -51,6 +51,40 @@ namespace WebApplication1.Services
             }
         }
 
+        public async Task<ResponseDto> CheckMemberOnTeam(int teamId, string userId)
+        {
+            try
+            {
+                // get member from team
+                bool isOnTeam;
+
+                TeamUserJunction? getUserModel = await _dbContext.TeamUserJunction.FirstOrDefaultAsync(x => x.UserId == userId && x.TeamId == teamId);
+
+                if(getUserModel == null)
+                {
+                    isOnTeam = false;
+                } else
+                {
+                    isOnTeam = true;
+                }
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success get is on team stateus";
+                _responseDto.Result = isOnTeam;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
         public async Task<ResponseDto> CreateTeam(TeamDto teamDto)
         {
             try

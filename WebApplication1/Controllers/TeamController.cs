@@ -127,5 +127,19 @@ namespace WebApplication1.Controllers
 
             return Ok(responseDto);
         }
+
+        [HttpGet]
+        [Route("check-member-onteam")]
+        public async Task<IActionResult> CheckMemberOnTeam(string userId, int teamId)
+        {
+            ResponseDto responseDto = await _teamService.CheckMemberOnTeam(teamId, userId);
+
+            if (!responseDto.IsSuccess)
+            {
+                return BadRequest(responseDto);
+            }
+
+            return Ok(responseDto);
+        }
     }
 }

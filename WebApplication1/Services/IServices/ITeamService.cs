@@ -20,5 +20,7 @@ namespace WebApplication1.Services.IServices
         public Task<ResponseDto> UnAssignedUserToTeam(string userId, int teamId);
 
         public Task<ResponseDto> GetAllTeamMember(int teamId);
+
+        public Task<ResponseDto> CheckMemberOnTeam(int teamId, string userId);
     }
 }
