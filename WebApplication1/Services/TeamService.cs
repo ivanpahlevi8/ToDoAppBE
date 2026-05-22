@@ -290,6 +290,10 @@ namespace WebApplication1.Services
                     return _responseDto;
                 }
 
+                _dbContext.TeamUserJunction.Remove(teamUserJunction);
+
+                await _dbContext.SaveChangesAsync();
+
                 _responseDto.IsSuccess= true;
                 _responseDto.Message = "Success unassigned user from team";
                 _responseDto.Result = "Success unassigned user from team";
