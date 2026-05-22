@@ -30,9 +30,47 @@ namespace WebApplication1.Services
 
                 project.CreatedAt = DateTime.Now;
 
-                await _dbContext.Projects.AddAsync(project);
+                // check if there is team id on it or not
+                if(projectDto.ProjectTeamId != null)
+                {
+                    // get team object
+                    TeamModel? getTeam = await _dbContext.Teams.FirstOrDefaultAsync(t => t.TeamId == projectDto.ProjectTeamId);
 
-                await _dbContext.SaveChangesAsync();
+                    if(getTeam == null) 
+                    {
+                        _responseDto.IsSuccess = false;
+                        _responseDto.Message = "Team with id " + projectDto.ProjectTeamId + " is not exist";
+
+                        return _responseDto;
+                    }
+
+                    // set project leader as team leader
+                    project.ProjectUserLeadId = getTeam.TeamLeader;
+
+                    // project to db
+                    await _dbContext.Projects.AddAsync(project);
+
+                    await _dbContext.SaveChangesAsync();
+
+                    // get all team member
+                    List<TeamUserJunction> getAllTuj = await _dbContext.TeamUserJunction.Where(tuj => tuj.TeamId == projectDto.ProjectTeamId).ToListAsync();
+
+                    // loop through all team user junction
+                    foreach(TeamUserJunction tuj in getAllTuj)
+                    {
+                        // create project user
+                        ProjectUserJunction projectUser = new ProjectUserJunction
+                        {
+                            UserId = tuj.UserId,
+                            ProjectId = project.ProjectId,
+                        };
+
+                        // add to db
+                        await _dbContext.ProjectUserJunction.AddAsync(projectUser);
+                    }
+
+                    await _dbContext.SaveChangesAsync(true);
+                }
 
                 _responseDto.IsSuccess = true;
                 _responseDto.Message = "Success insert project";
@@ -251,6 +289,31 @@ namespace WebApplication1.Services
                 _responseDto.IsSuccess=true;
                 _responseDto.Message = "Success getting project based on user id";
                 _responseDto.Result = allProjectDto;
+
+                return _responseDto;
+            }
+            catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
+        public async Task<ResponseDto> GetProjectByTeam(int teamId)
+        {
+            try
+            {
+                List<ProjectModel> getAllProjectTeam = await _dbContext.Projects.Where(p => p.ProjectTeamId == teamId).ToListAsync();
+
+                List<ProjectDto> getAllProjectTeamDto = _mapper.Map<List<ProjectDto>>(getAllProjectTeam);
+
+                _responseDto.IsSuccess=true;
+                _responseDto.Message = "Success get all project within a team";
+                _responseDto.Result = getAllProjectTeamDto;
 
                 return _responseDto;
             }

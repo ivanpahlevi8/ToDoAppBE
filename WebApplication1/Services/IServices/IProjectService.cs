@@ -15,6 +15,7 @@ namespace WebApplication1.Services.IServices
 
         // function to get all project based on user member
         public Task<ResponseDto> GetProjectByUserMember(string userId);
+        public Task<ResponseDto> GetProjectByTeam(int teamId);
 
         // function to read all project
         public Task<ResponseDto> GetAllProject();

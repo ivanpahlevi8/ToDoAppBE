@@ -99,5 +99,19 @@ namespace WebApplication1.Controllers
 
             return Ok(responseDto);
         }
+
+        [HttpGet]
+        [Route("get-all-project-byteam")]
+        public async Task<IActionResult> GetAllProjectByTeam(int teamId)
+        {
+            ResponseDto responseDto = await _projectService.GetProjectByTeam(teamId);
+
+            if (!responseDto.IsSuccess)
+            {
+                return BadRequest(responseDto);
+            }
+
+            return Ok(responseDto);
+        }
     }
 }
