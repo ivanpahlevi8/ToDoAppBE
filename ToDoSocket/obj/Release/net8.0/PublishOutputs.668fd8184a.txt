@@ -1,0 +1,11 @@
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\ToDoSocket.exe
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\appsettings.Development.json
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\appsettings.json
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\ToDoSocket.dll
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\ToDoSocket.deps.json
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\ToDoSocket.runtimeconfig.json
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\ToDoSocket.pdb
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\Microsoft.OpenApi.dll
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\Swashbuckle.AspNetCore.Swagger.dll
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerGen.dll
+E:\Ivan Data\Second\Coding\Learn .NET\ToDoApp\ToDoApp\ToDoSocket\obj\Release\net8.0\PubTmp\Out\Swashbuckle.AspNetCore.SwaggerUI.dll

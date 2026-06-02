@@ -37,6 +37,8 @@ app.Map("/ws", async context =>
 {
     if (context.WebSockets.IsWebSocketRequest)
     {
+        string room = context.Request.Query["projectId"].FirstOrDefault() ?? "default";
+
         var connectionManager = context.RequestServices.GetService<WebSocketConnectionManager>();
         var webSocket = await context.WebSockets.AcceptWebSocketAsync();
         var connectionId = Guid.NewGuid().ToString();

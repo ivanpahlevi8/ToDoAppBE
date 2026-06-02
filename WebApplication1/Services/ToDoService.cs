@@ -29,8 +29,12 @@ namespace WebApplication1.Services
 
                 await _dbContext.SaveChangesAsync();
 
+                // map to do model to dto
+                ToDoDto toDoDto = _mapper.Map<ToDoDto>(toDoModel);
+
                 _responseDto.IsSuccess = true;
                 _responseDto.Message = "Success create To Do";
+                _responseDto.Result = toDoDto;
 
                 return _responseDto;
             }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ToDoSocket")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ff25605d41825975f7ceb4e169959bb7be2e811e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f653e23781c8bc2750bb3dee29269b8205e9ab06")]
 [assembly: System.Reflection.AssemblyProductAttribute("ToDoSocket")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ToDoSocket")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
