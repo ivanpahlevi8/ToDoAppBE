@@ -372,7 +372,7 @@ namespace WebApplication1.Services
             {
                 ConnectionModel? connection = await _dbContext.Connections.FirstOrDefaultAsync(c => (c.UserOwnerId == userId && c.UserConnectionId == connectedUserId) || (c.UserOwnerId == connectedUserId && c.UserConnectionId == userId));
 
-                if (connection == null)
+                if (connection == null || connection.ConnectionStatus == SD.CONNECTION_DISCONNECT_STATUS || connection.ConnectionStatus == SD.CONNECTION_REJECT_STATUS)
                 {
                     _responseDto.Message = "No Connection";
                     _responseDto.Result = false;

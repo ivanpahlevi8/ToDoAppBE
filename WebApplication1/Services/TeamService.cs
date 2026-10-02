@@ -233,8 +233,6 @@ namespace WebApplication1.Services
                 TeamModel? getTeamModel = await _dbContext.Teams
                     .Include(t => t.TeamUserJunction)
                         .ThenInclude(tuj => tuj.User)
-                    .Include(t => t.TeamUserJunction)
-                        .ThenInclude(tuj=> tuj.TeamRole)
                     .FirstOrDefaultAsync(t => t.TeamId == teamId);
 
                 if(getTeamModel == null)
@@ -245,19 +243,19 @@ namespace WebApplication1.Services
                     return _responseDto;
                 }
 
+                // get all role team related to team id
+                List<TeamRoleModel> allTeamRoles = await _dbContext.TeamRoles.Where(tr => tr.TeamId == teamId).ToListAsync();
+
+                List<TeamRoleDto> allTeamRoleDto = _mapper.Map<List<TeamRoleDto>>(allTeamRoles);
+
                 // get user
                 List<UserModel> userMemberModel = getTeamModel.TeamUserJunction.Select(tuj => tuj.User).ToList();
 
                 List<UserDto> userMemberDto = _mapper.Map<List<UserDto>>(userMemberModel);
 
-                // get team role
-                List<TeamRoleModel> teamRoleModel = getTeamModel.TeamUserJunction.Select(tuj => tuj.TeamRole).ToList();
-
-                List<TeamRoleDto> teamRoleDto = _mapper.Map<List<TeamRoleDto>>(teamRoleModel);
-
                 TeamDto teamDto = _mapper.Map<TeamDto>(getTeamModel);
                 teamDto.UserMember = userMemberDto;
-                teamDto.RoleMember = teamRoleDto;
+                teamDto.RoleMember = allTeamRoleDto;
 
                 _responseDto.IsSuccess = true;
                 _responseDto.Message = "Success get team by id";

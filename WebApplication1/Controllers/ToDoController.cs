@@ -43,5 +43,33 @@ namespace WebApplication1.Controllers
 
             return Ok(responseDto);
         }
+
+        [HttpGet]
+        [Route("get-todo-project")]
+        public async Task<IActionResult> GetToDoProject(int projectId)
+        {
+            ResponseDto responseDto = await _toDoService.GetToDoWithinProject(projectId);
+
+            if (!responseDto.IsSuccess)
+            {
+                return BadRequest(responseDto);
+            }
+
+            return Ok(responseDto);
+        }
+
+        [HttpDelete]
+        [Route("delete-todo")]
+        public async Task<IActionResult> DeleteToDo(int toDoId)
+        {
+            ResponseDto responseDto = await _toDoService.DeleteToDo(toDoId);
+
+            if (!responseDto.IsSuccess)
+            {
+                return BadRequest(responseDto);
+            }
+
+            return Ok(responseDto);
+        }
     }
 }

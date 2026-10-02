@@ -102,6 +102,12 @@ namespace WebApplication1.Services
                     return _responseDto;
                 }
 
+                // get all user related to this projects
+                var getAllProjectUserJunction = await _dbContext.ProjectUserJunction.Where(puj => puj.ProjectId == projectId).ToListAsync();
+
+                // remove it
+                _dbContext.ProjectUserJunction.RemoveRange(getAllProjectUserJunction);
+
                 _dbContext.Projects.Remove(getProject);
                 await _dbContext.SaveChangesAsync();
 
