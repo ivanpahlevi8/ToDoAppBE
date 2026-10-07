@@ -234,6 +234,9 @@ namespace WebApplication1.Migrations
                     b.Property<int>("ProjectId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("UserId", "ProjectId");
 
                     b.HasIndex("ProjectId");
@@ -304,6 +307,9 @@ namespace WebApplication1.Migrations
                     b.Property<int>("TeamId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("TeamRoleId")
                         .HasColumnType("int");
 
@@ -327,6 +333,10 @@ namespace WebApplication1.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("CreatedById")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("ItemDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -343,6 +353,8 @@ namespace WebApplication1.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("ToDoId");
+
+                    b.HasIndex("CreatedById");
 
                     b.HasIndex("ProjectId");
 
@@ -583,11 +595,19 @@ namespace WebApplication1.Migrations
 
             modelBuilder.Entity("WebApplication1.Models.ToDoModel", b =>
                 {
+                    b.HasOne("WebApplication1.Models.UserModel", "CreatedBy")
+                        .WithMany("ToDos")
+                        .HasForeignKey("CreatedById")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("WebApplication1.Models.ProjectModel", "Project")
                         .WithMany("ToDos")
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("CreatedBy");
 
                     b.Navigation("Project");
                 });
@@ -624,6 +644,8 @@ namespace WebApplication1.Migrations
                     b.Navigation("TeamUsersJunction");
 
                     b.Navigation("Teams");
+
+                    b.Navigation("ToDos");
                 });
 #pragma warning restore 612, 618
         }

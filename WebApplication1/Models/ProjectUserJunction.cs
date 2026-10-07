@@ -7,5 +7,7 @@
 
         public int ProjectId { get; set; }
         public ProjectModel Project { get; set; }
+
+        public DateTime CreatedAt { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Jakarta"));
     }
 }

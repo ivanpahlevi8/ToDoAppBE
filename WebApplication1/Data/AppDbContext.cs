@@ -110,6 +110,13 @@ namespace WebApplication1.Data
                 .HasForeignKey(c => c.UserConnectionId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // create relation between user model and to do
+            modelBuilder.Entity<UserModel>()
+                .HasMany(u => u.ToDos)
+                .WithOne(td => td.CreatedBy)
+                .HasForeignKey(td => td.CreatedById)
+                .OnDelete(DeleteBehavior.Restrict);
+
             base.OnModelCreating(modelBuilder);
         }
     }

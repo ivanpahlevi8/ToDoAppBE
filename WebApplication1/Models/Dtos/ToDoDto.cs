@@ -15,5 +15,7 @@ namespace WebApplication1.Models.Dtos
         public string ItemState { get; set; }
 
         public DateTime CreatedAt { get; set; }
+
+        public string CreatedById { get; set; }
     }
 }

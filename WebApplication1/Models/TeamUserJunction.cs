@@ -10,5 +10,7 @@
 
         public int TeamRoleId { get; set; }
         public TeamRoleModel TeamRole { get; set; }
+
+        public DateTime CreatedAt { get; set; } = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Asia/Jakarta"));
     }
 }

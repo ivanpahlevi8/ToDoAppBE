@@ -25,5 +25,8 @@ namespace WebApplication1.Models
 
         // relation to many with requested connection
         public List<ConnectionModel> RequestedConnection { get; set; }
+
+        // relation to many iwth to do
+        public List<ToDoModel> ToDos { get; set; }
     }
 }

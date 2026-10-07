@@ -20,5 +20,8 @@ namespace WebApplication1.Models
 
         public DateTime CreatedAt { get; set; }
 
+        public string CreatedById { get; set; }
+        public UserModel CreatedBy { get; set; }
+
     }
 }
