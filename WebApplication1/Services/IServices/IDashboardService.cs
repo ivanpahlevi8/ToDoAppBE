@@ -12,5 +12,8 @@ namespace WebApplication1.Services.IServices
 
         // function to get summary of team(number team involved, and number team leading)
         public Task<ResponseDto> GetDashboardTeamSummary(string userId);
+
+        // function to get summary of connection
+        public Task<ResponseDto> GetDashboardConnectionSummary(string userId);
     }
 }

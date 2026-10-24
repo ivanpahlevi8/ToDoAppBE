@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using WebApplication1.Core;
 using WebApplication1.Data;
 using WebApplication1.Models;
 using WebApplication1.Models.Dtos;
@@ -183,7 +184,69 @@ namespace WebApplication1.Services
 
                 return _responseDto;
             }
+        }
 
+        public async Task<ResponseDto> GetDashboardConnectionSummary(string userId)
+        {
+            try
+            {
+                // get number of requested connection to user
+                int numberOfRequestedConnection = await _dbContext.Connections.CountAsync(c => c.UserConnectionId == userId);
+
+                // get number of request connection from user
+                int numerOfRequestConnection = await _dbContext.Connections.CountAsync(c => c.UserOwnerId == userId);
+
+                // get number of connection with status user follow
+                int numberConnectionUserFollowStatus = await _dbContext.Connections.Where(c => c.UserOwnerId == userId).CountAsync(c => c.ConnectionStatus == SD.CONNECTION_FOLLOW_STATUS);
+
+                // get number to connection with status user is followed
+                int numerConnectionUserFollowedStatus = await _dbContext.Connections.Where(c => c.UserConnectionId == userId).CountAsync(c => c.ConnectionStatus == SD.CONNECTION_FOLLOW_STATUS);
+
+                // get number of connection with status connect
+                int numberConnectionConnectedStatus = await _dbContext.Connections.Where(c => c.UserConnectionId == userId || c.UserOwnerId == userId).CountAsync(c => c.ConnectionStatus == SD.CONNECTION_CONNECT_STATUS);
+
+                // get number of connection with status user reject
+                int numberConnectionUserRejectStatus = await _dbContext.Connections.Where(c => c.UserConnectionId == userId).CountAsync(c => c.ConnectionStatus == SD.CONNECTION_DISCONNECT_STATUS);
+
+                // get number of connection with status rejected by user
+                int numberConnectionUserRejectedStatus = await _dbContext.Connections.Where(c => c.UserOwnerId == userId).CountAsync(c => c.ConnectionStatus == SD.CONNECTION_DISCONNECT_STATUS);
+
+                // get number of connection with status disconnected
+                int numberConnectionDisconnectedStatus = await _dbContext.Connections.Where(c => c.UserOwnerId == userId || c.UserConnectionId == userId).CountAsync(c => c.ConnectionStatus == SD.CONNECTION_DISCONNECT_STATUS);
+
+                // get top three user connection
+                List<ConnectionModel> topThreeConenction = await _dbContext.Connections.Where(c => c.UserOwnerId == userId || c.UserConnectionId == userId).Where(c => c.ConnectionStatus == SD.CONNECTION_CONNECT_STATUS).OrderByDescending(c => c.CreatedAt).Take(3).ToListAsync();
+
+                // create connection summary 
+                ConnectionSummaryDto connectionSummary = new ConnectionSummaryDto
+                {
+                    NumberOfRequestedConnection = numberOfRequestedConnection,
+                    NumberOfRequestConnection = numerOfRequestConnection,
+                    NumberConnectionStatusUserFollow = numberConnectionUserFollowStatus,
+                    NumberConnectionStatusUserFollowed = numerConnectionUserFollowedStatus,
+                    NumberConnectionStatusConnect = numberConnectionConnectedStatus,
+                    NumberConnectionStatusUserReject = numberConnectionUserRejectStatus,
+                    NumberConnectionStatusUserRejected = numberConnectionUserRejectedStatus,
+                    NumberConnectionStatusDisconnect = numberConnectionDisconnectedStatus,
+                    TopThreeConnection = _mapper.Map<List<ConnectionDto>>(topThreeConenction)
+                };
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success getting connection summary";
+                _responseDto.Result = connectionSummary;
+
+                return _responseDto;
+            } catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+            
+            
             throw new NotImplementedException();
         }
     }

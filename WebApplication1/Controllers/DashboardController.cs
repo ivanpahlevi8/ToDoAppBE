@@ -62,5 +62,21 @@ namespace WebApplication1.Controllers
                 return BadRequest(responseDto);
             }
         }
+
+        [HttpGet]
+        [Route("connection-summary")]
+        public async Task<IActionResult> ConnectionSummary(string userId)
+        {
+            ResponseDto responseDto = await _dashboardService.GetDashboardConnectionSummary(userId);
+
+            if (responseDto.IsSuccess)
+            {
+                return Ok(responseDto);
+            }
+            else
+            {
+                return BadRequest(responseDto);
+            }
+        }
     }
 }
