@@ -9,7 +9,7 @@ using WebApplication1.Services.IServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSwaggerGen(c =>
+/*builder.Services.AddSwaggerGen(c =>
 {
     // Hardcode the production server right into the generator
     c.AddServer(new Microsoft.OpenApi.Models.OpenApiServer
@@ -17,7 +17,7 @@ builder.Services.AddSwaggerGen(c =>
         Url = "https://ivan-portofolio.xyz/todoapp",
         Description = "Production Server"
     });
-});
+});*/
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -51,6 +51,8 @@ builder.Services.AddScoped<ITeamRoleService, TeamRoleService>();
 
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 
+builder.Services.AddScoped<IPerformanceService, PerformanceService>();
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
@@ -63,7 +65,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-app.UsePathBase("/todoapp");
+//app.UsePathBase("/todoapp");
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
