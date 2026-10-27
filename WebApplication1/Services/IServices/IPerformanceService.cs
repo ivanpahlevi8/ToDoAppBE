@@ -9,5 +9,8 @@ namespace WebApplication1.Services.IServices
 
         // function to get project performance
         public Task<ResponseDto> ProjectPerformance(string userId);
+
+        // function to get team performance
+        public Task<ResponseDto> TeamPerformance(string userId);
     }
 }

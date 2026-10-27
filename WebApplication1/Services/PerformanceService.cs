@@ -87,6 +87,74 @@ namespace WebApplication1.Services
             }
         }
 
+        public async Task<ResponseDto> TeamPerformance(string userId)
+        {
+            try
+            {
+                // get current month
+                var currentDateTime = DateTime.Now;
+                var currentMonthStartDate = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
+                var currentMonthEndDate = currentMonthStartDate.AddMonths(1).AddDays(-1);
+
+                // get last month
+                var lastMonthStartDate = currentMonthStartDate.AddMonths(-1);
+                var lastMonthEndDate = currentMonthEndDate.AddMonths(-1);
+
+                // get number team lead
+                int numberTeamLeadsCurrMonth = await _dbContext.Teams.Where(t => t.TeamLeader == userId).CountAsync(t => t.CreatedAt >= currentMonthStartDate && t.CreatedAt <= currentMonthEndDate);
+                int numberTeamLeadsLastMonth = await _dbContext.Teams.Where(t => t.TeamLeader == userId).CountAsync(t => t.CreatedAt >= lastMonthStartDate && t.CreatedAt <= lastMonthEndDate);
+
+                // calculate percentage number team leads
+                int numberTeamLeadsPercentage = 0;
+                if(numberTeamLeadsLastMonth < 1)
+                {
+                    numberTeamLeadsPercentage = 100;
+                } else
+                {
+                    numberTeamLeadsPercentage = (numberTeamLeadsCurrMonth - numberTeamLeadsLastMonth) / numberTeamLeadsLastMonth * 100;
+                }
+
+                // get number team involved
+                int numberTeamInvolvedCurrMonth = await _dbContext.TeamUserJunction.Where(tuj => tuj.UserId == userId).CountAsync(tuj => tuj.CreatedAt >= currentMonthStartDate && tuj.CreatedAt <= currentMonthEndDate);
+                int numberTeamInvolvedLastMonth = await _dbContext.TeamUserJunction.Where(tuj => tuj.UserId == userId).CountAsync(tuj => tuj.CreatedAt >= lastMonthStartDate && tuj.CreatedAt <= lastMonthEndDate);
+
+                // calculate percentage number team involved
+                int numberTeamInvolvedPercentage = 0;
+                if(numberTeamInvolvedLastMonth < 1)
+                {
+                    numberTeamInvolvedPercentage = 100;
+                } else
+                {
+                    numberTeamInvolvedPercentage = (numberTeamInvolvedCurrMonth - numberTeamInvolvedLastMonth) / numberTeamInvolvedLastMonth * 100;
+                }
+
+                // create team performance
+                TeamPerformanceDto teamPerformance = new TeamPerformanceDto
+                {
+                    NumberTeamLeadsCurrMonth = numberTeamLeadsCurrMonth,
+                    NumberTeamLeadsLastMonth = numberTeamLeadsLastMonth,
+                    NumberTeamLeadsPercentage = numberTeamLeadsPercentage,
+                    NumberTeamInvolvedCurrMonth = numberTeamInvolvedCurrMonth,
+                    NumberTeamInvolvedLastMonth = numberTeamInvolvedLastMonth,
+                    NumberTeamInvolvedPercentage = numberTeamInvolvedPercentage
+                };
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success getting team performance";
+                _responseDto.Result = teamPerformance;
+
+                return _responseDto;
+            } catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException?.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
         public async Task<ResponseDto> ToDoPerformance(string userId)
         {
             try

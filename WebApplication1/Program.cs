@@ -9,7 +9,7 @@ using WebApplication1.Services.IServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
-/*builder.Services.AddSwaggerGen(c =>
+builder.Services.AddSwaggerGen(c =>
 {
     // Hardcode the production server right into the generator
     c.AddServer(new Microsoft.OpenApi.Models.OpenApiServer
@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
         Url = "https://ivan-portofolio.xyz/todoapp",
         Description = "Production Server"
     });
-});*/
+});
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -65,7 +65,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-//app.UsePathBase("/todoapp");
+app.UsePathBase("/todoapp");
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
