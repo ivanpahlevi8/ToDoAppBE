@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using WebApplication1.Core;
 using WebApplication1.Data;
 using WebApplication1.Models.Dtos;
 using WebApplication1.Models.Dtos.Performance;
@@ -19,6 +20,73 @@ namespace WebApplication1.Services
             _mapper = mapper;
 
             _responseDto = new ResponseDto();
+        }
+
+        public async Task<ResponseDto> ConnectionPerformance(string userId)
+        {
+            try
+            {
+                // get current month
+                var currentDateTime = DateTime.Now;
+                var currentMonthStartDate = new DateTime(currentDateTime.Year, currentDateTime.Month, 1);
+                var currentMonthEndDate = currentMonthStartDate.AddMonths(1).AddDays(-1);
+
+                // get last month
+                var lastMonthStartDate = currentMonthStartDate.AddMonths(-1);
+                var lastMonthEndDate = currentMonthEndDate.AddMonths(-1);
+
+                // get connection connected data
+                int getConnectionConnectedCurrMonth = await _dbContext.Connections.Where(c => c.UserConnectionId == userId || c.UserOwnerId == userId).Where(c => c.ConnectionStatus == SD.CONNECTION_CONNECT_STATUS).CountAsync(c => c.CreatedAt >= currentMonthStartDate && c.CreatedAt <= currentMonthEndDate);
+                int getConnectionConnectedLastMonth = await _dbContext.Connections.Where(c => c.UserConnectionId == userId || c.UserOwnerId == userId).Where(c => c.ConnectionStatus == SD.CONNECTION_CONNECT_STATUS).CountAsync(c => c.CreatedAt >= lastMonthStartDate && c.CreatedAt <= lastMonthEndDate);
+
+                // connection connected percentage
+                int connectionConnectedPercentage = 0;
+                if(getConnectionConnectedLastMonth < 1)
+                {
+                    connectionConnectedPercentage = 100;
+                } else
+                {
+                    connectionConnectedPercentage = (getConnectionConnectedCurrMonth = getConnectionConnectedLastMonth) / getConnectionConnectedLastMonth * 100;
+                }
+
+                // get connection disconnected data
+                int getConnectionDisconnectedCurrMonth = await _dbContext.Connections.Where(c => c.UserConnectionId == userId || c.UserOwnerId == userId).Where(c => c.ConnectionStatus == SD.CONNECTION_DISCONNECT_STATUS).CountAsync(c => c.CreatedAt >= currentMonthStartDate && c.CreatedAt <= currentMonthEndDate);
+                int getConnectionDisconnectedLastMonth = await _dbContext.Connections.Where(c => c.UserConnectionId == userId || c.UserOwnerId == userId).Where(c => c.ConnectionStatus == SD.CONNECTION_DISCONNECT_STATUS).CountAsync(c => c.CreatedAt >= lastMonthStartDate && c.CreatedAt <= lastMonthEndDate);
+
+                int connectionDisconnectedPercentage = 0;
+                if(getConnectionDisconnectedLastMonth < 1)
+                {
+                    connectionDisconnectedPercentage = 100;
+                } else
+                {
+                    connectionDisconnectedPercentage = (getConnectionDisconnectedCurrMonth - getConnectionDisconnectedLastMonth) / getConnectionDisconnectedLastMonth * 100;
+                }
+
+                // create connection performance
+                ConnectionPerformanceDto connectionPerformance = new ConnectionPerformanceDto
+                {
+                    ConnectionConnectCurrMonth = getConnectionConnectedCurrMonth,
+                    ConnectionConnectLastMonth = getConnectionConnectedLastMonth,
+                    ConnectionConnectPercentage = connectionConnectedPercentage,
+                    ConnectionDisconnectCurrMonth = getConnectionDisconnectedCurrMonth,
+                    ConnectionDisconnectLastMonth = getConnectionDisconnectedLastMonth,
+                    ConnectionDisconnectPercentage = connectionDisconnectedPercentage,
+                };
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success getting connection performance";
+                _responseDto.Result = connectionPerformance;
+
+                return _responseDto;
+            } catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException?.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
         }
 
         public async Task<ResponseDto> ProjectPerformance(string userId)

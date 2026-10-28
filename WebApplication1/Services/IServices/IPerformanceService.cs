@@ -12,5 +12,8 @@ namespace WebApplication1.Services.IServices
 
         // function to get team performance
         public Task<ResponseDto> TeamPerformance(string userId);
+
+        // function to get connection performance
+        public Task<ResponseDto> ConnectionPerformance(string userId);
     }
 }
