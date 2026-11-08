@@ -78,5 +78,21 @@ namespace WebApplication1.Controllers
                 return BadRequest(response);
             }
         }
+
+        [HttpGet]
+        [Route("get-todo-performance-chart")]
+        public async Task<IActionResult> GetToDoPerformanceChart(string userId, int year)
+        {
+            ResponseDto response = await _service.GetToDoPerformanceChart(userId, year);
+
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
     }
 }

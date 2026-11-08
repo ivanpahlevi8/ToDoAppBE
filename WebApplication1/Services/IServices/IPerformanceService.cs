@@ -15,5 +15,8 @@ namespace WebApplication1.Services.IServices
 
         // function to get connection performance
         public Task<ResponseDto> ConnectionPerformance(string userId);
+
+        // function to get todo performance chart
+        public Task<ResponseDto> GetToDoPerformanceChart(string userId, int year);
     }
 }

@@ -89,6 +89,62 @@ namespace WebApplication1.Services
             }
         }
 
+        public async Task<ResponseDto> GetToDoPerformanceChart(string userId, int year)
+        {
+            try
+            {
+                // create start and end date range
+                var start = new DateTime(year, 1, 1);
+                var end = start.AddYears(1);
+
+                // get on created todo
+                var onCreatedToDoData = await _dbContext.ToDo
+                    .Where(t => t.CreatedById == userId)
+                    .Where(t => t.ItemState == "PROCESSED_TO_DO") // CREATED_TO_DO
+                    .Where(t => t.CreatedAt >= start && t.CreatedAt < end)
+                    .GroupBy(t => new { t.CreatedAt.Year, t.CreatedAt.Month })
+                    .Select(t => new ChartObjectDto { Year=t.Key.Year, Month=t.Key.Month, Count=t.Count()})
+                    .ToListAsync();
+
+                var resultList = new List<ChartObjectDto>();
+
+                // loop through 12 month
+                for(int i = 1; i <= 12; i++)
+                {
+                    // create date time
+                    var dateTime = new DateTime(year, i, 1);
+
+                    // check if month exist on created to do data
+                    bool isMonthExist = onCreatedToDoData.Any(dt => dt.Month == i);
+
+                    if(!isMonthExist)
+                    {
+                        resultList.Add(new ChartObjectDto { Year = dateTime.Year, Month = dateTime.Month, Count = 0 });
+                    } else
+                    {
+                        // get the data
+                        var getData = onCreatedToDoData.Where(dt => dt.Month == i).FirstOrDefault()!;
+
+                        resultList.Add(getData);
+                    }
+                }
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success";
+                _responseDto.Result = resultList;
+
+                return _responseDto;
+            } catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException?.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
         public async Task<ResponseDto> ProjectPerformance(string userId)
         {
             try
