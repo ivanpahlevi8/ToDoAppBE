@@ -126,5 +126,21 @@ namespace WebApplication1.Controllers
                 return BadRequest(response);
             }
         }
+
+        [HttpGet]
+        [Route("get-connection-performance-chart")]
+        public async Task<IActionResult> GetConnectionPerformanceChart(string userId, int year)
+        {
+            ResponseDto response = await _service.getConnectionPerformance(userId, year);
+
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
     }
 }

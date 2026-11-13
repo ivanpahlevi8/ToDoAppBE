@@ -114,6 +114,9 @@ namespace WebApplication1.Services
             {
                 ConnectionModel connectionModel = _mapper.Map<ConnectionModel>(connectionDto);
 
+                // update date time
+                connectionModel.CreatedAt = DateTime.Now;
+
                 // initial status of connection is following
                 connectionModel.ConnectionStatus = SD.CONNECTION_FOLLOW_STATUS;
 
@@ -153,7 +156,10 @@ namespace WebApplication1.Services
                 }
 
                 getConnection.ConnectionStatus = SD.CONNECTION_DISCONNECT_STATUS;
-                
+
+                // update date time
+                getConnection.CreatedAt = DateTime.Now;
+
                 _dbContext.Update(getConnection);
 
                 await _dbContext.SaveChangesAsync();
@@ -202,6 +208,8 @@ namespace WebApplication1.Services
                 }
 
                 getConnection.ConnectionStatus = SD.CONNECTION_REJECT_STATUS;
+
+                getConnection.CreatedAt = DateTime.Now;
 
                 _dbContext.Update(getConnection);
 

@@ -89,6 +89,99 @@ namespace WebApplication1.Services
             }
         }
 
+        public async Task<ResponseDto> getConnectionPerformance(string userId, int year)
+        {
+            try
+            {
+                // get start and end date
+                var start = new DateTime(year: year, month: 1, day: 1);
+                var end = start.AddYears(1);
+
+                // get connection connected
+                var getConnectionConnected = await _dbContext.Connections
+                    .Where(c => c.UserConnectionId == userId || c.UserOwnerId == userId)
+                    .Where(c => c.ConnectionStatus == SD.CONNECTION_CONNECT_STATUS)
+                    .Where(c => c.CreatedAt >= start && c.CreatedAt <= end)
+                    .GroupBy(c => new { c.CreatedAt.Year, c.CreatedAt.Month })
+                    .Select(c => new ChartObjectDto { Year = c.Key.Year, Month = c.Key.Month, Count = c.Count() })
+                    .ToListAsync();
+
+                // get connection disconnected
+                var getConnectionDisconnect = await _dbContext.Connections
+                    .Where(c => c.UserConnectionId == userId || c.UserOwnerId == userId)
+                    .Where(c => c.ConnectionStatus == SD.CONNECTION_DISCONNECT_STATUS)
+                    .Where(c => c.CreatedAt >= start && c.CreatedAt <= end)
+                    .GroupBy(c => new { c.CreatedAt.Year, c.CreatedAt.Month })
+                    .Select(c => new ChartObjectDto { Year = c.Key.Year, Month = c.Key.Month, Count = c.Count() })
+                    .ToListAsync();
+
+                // create result for each
+                var connectionConnectedResult = new List<ChartObjectDto>();
+                var connectionDisconnectedResult = new List<ChartObjectDto>();
+
+                for(int i = 1; i <= 12; i++)
+                {
+                    var isConnectionConnectedExist = getConnectionConnected.Any(c => c.Month == i);
+                    var isConnectionDisconnectExist = getConnectionDisconnect.Any(c => c.Month == i);
+
+                    if(!isConnectionConnectedExist || !isConnectionDisconnectExist)
+                    {
+                        var chartData = new ChartObjectDto
+                        {
+                            Year = year,
+                            Month = i,
+                            Count = 0,
+                        };
+
+                        if(!isConnectionConnectedExist)
+                        {
+                            connectionConnectedResult.Add(chartData);
+                        }
+                        
+                        if(!isConnectionDisconnectExist)
+                        {
+                            connectionDisconnectedResult.Add(chartData);
+                        }
+                    } else
+                    {
+                        var getConnected = getConnectionConnected.Where(c => c.Month == i).FirstOrDefault()!;
+                        var getDisconnect = getConnectionDisconnect.Where(c => c.Month == i).FirstOrDefault()!;
+
+                        if(isConnectionConnectedExist)
+                        {
+                            connectionConnectedResult.Add(getConnected);
+                        }
+                        
+                        if(isConnectionDisconnectExist)
+                        {
+                            connectionDisconnectedResult.Add(getDisconnect);
+                        }
+                    }
+                }
+
+                // create response
+                ConnectionChartPeformanceDto connectionChart = new ConnectionChartPeformanceDto
+                {
+                    ConnectionConnectedChart = connectionConnectedResult,
+                    ConnectionDisconnectedChart = connectionDisconnectedResult,
+                };
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success get data";
+                _responseDto.Result = connectionChart;
+
+                return _responseDto;
+            } catch(Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException?.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
         public async Task<ResponseDto> GetProjectPerformanceChart(string userId, int year)
         {
             try
