@@ -22,5 +22,7 @@ namespace WebApplication1.Services.IServices
         // function to get project performance chart
         public Task<ResponseDto> GetProjectPerformanceChart(string userId, int year);
 
+        // function to get team performance chart
+        public Task<ResponseDto> GetTeamPerformanceChart(string userId, int year);
     }
 }

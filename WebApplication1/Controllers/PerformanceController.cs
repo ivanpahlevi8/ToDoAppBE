@@ -94,5 +94,37 @@ namespace WebApplication1.Controllers
                 return BadRequest(response);
             }
         }
+
+        [HttpGet]
+        [Route("get-project-performance-chart")]
+        public async Task<IActionResult> GetProjectPerformanceChart(string userId, int year)
+        {
+            ResponseDto response = await _service.GetProjectPerformanceChart(userId, year);
+
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
+
+        [HttpGet]
+        [Route("get-team-performance-chart")]
+        public async Task<IActionResult> GetTeamPerformanceChart(string userId, int year)
+        {
+            ResponseDto response = await _service.GetTeamPerformanceChart(userId, year);
+
+            if (response.IsSuccess)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return BadRequest(response);
+            }
+        }
     }
 }

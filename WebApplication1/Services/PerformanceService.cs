@@ -183,6 +183,101 @@ namespace WebApplication1.Services
             }
         }
 
+        public async Task<ResponseDto> GetTeamPerformanceChart(string userId, int year)
+        {
+            try
+            {
+                // create start and end date
+                var start = new DateTime(year: year, month: 1, day: 1);
+                var end = start.AddYears(1);
+
+                // get all team as leader
+                var getAllTeamAsLeader = await _dbContext.Teams
+                    .Where(t => t.TeamLeader == userId)
+                    .Where(t => t.CreatedAt >= start && t.CreatedAt <= end)
+                    .GroupBy(t => new { t.CreatedAt.Year, t.CreatedAt.Month })
+                    .Select(t => new ChartObjectDto { Year = t.Key.Year, Month = t.Key.Month, Count = t.Count() })
+                    .ToListAsync();
+
+                var getAllTeamAsLeaderResult = new List<ChartObjectDto>();
+
+
+                // get all team as member
+                var getAllTeamAsMember = await _dbContext.TeamUserJunction
+                    .Where(tuj => tuj.UserId == userId)
+                    .Where(tuj => tuj.CreatedAt >= start && tuj.CreatedAt <= end)
+                    .GroupBy(tuj => new { tuj.CreatedAt.Year, tuj.CreatedAt.Month })
+                    .Select(tuj => new ChartObjectDto { Year = tuj.Key.Year, Month = tuj.Key.Month, Count = tuj.Count() })
+                    .ToListAsync();
+
+                var getAllTeamAsMemberResult = new List<ChartObjectDto>();
+
+                for (int i = 1; i <= 12; i++)
+                {
+                    bool isDataExist = getAllTeamAsLeader.Any(t => t.Month == i);
+
+                    if (!isDataExist)
+                    {
+                        var chartData = new ChartObjectDto
+                        {
+                            Year = year,
+                            Month = i,
+                            Count = 0,
+                        };
+
+                        getAllTeamAsLeaderResult.Add(chartData);
+                    }
+                    else
+                    {
+                        var getDataLead = getAllTeamAsLeader.Where(t => t.Month == i).FirstOrDefault()!;
+
+                        getAllTeamAsLeaderResult.Add(getDataLead);
+                    }
+
+                    isDataExist = getAllTeamAsMember.Any(t => t.Month == i);
+
+                    if (!isDataExist)
+                    {
+                        var chartData = new ChartObjectDto
+                        {
+                            Year = year,
+                            Month = i,
+                            Count = 0,
+                        };
+
+                        getAllTeamAsMemberResult.Add(chartData);
+                    }
+                    else
+                    {
+                        var getDataMember = getAllTeamAsMember.Where(t => t.Month == i).FirstOrDefault()!;
+
+                        getAllTeamAsMemberResult.Add(getDataMember);
+                    }
+                }
+
+                // create result
+                TeamChartPerformanceDto teamChart = new TeamChartPerformanceDto
+                {
+                    TeamNumberAsLead = getAllTeamAsLeaderResult,
+                    TeamNumberAsMember = getAllTeamAsMemberResult,
+                };
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Success get result";
+                _responseDto.Result = teamChart;
+
+                return _responseDto;
+            } catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException?.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
         public async Task<ResponseDto> GetToDoPerformanceChart(string userId, int year)
         {
             try
