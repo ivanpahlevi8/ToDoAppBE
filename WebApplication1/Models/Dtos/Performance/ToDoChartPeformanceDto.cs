@@ -2,8 +2,8 @@
 {
     public class ToDoChartPeformanceDto
     {
-        public List<int> ToDoOnCreatedYear { get; set; }
-        public List<int> ToDoOnProgressedYear { get; set; }
-        public List<int> ToDoOnFinishedYear { get; set; }
+        public List<ChartObjectDto> ToDoOnCreatedYear { get; set; }
+        public List<ChartObjectDto> ToDoOnProgressedYear { get; set; }
+        public List<ChartObjectDto> ToDoOnFinishedYear { get; set; }
     }
 }

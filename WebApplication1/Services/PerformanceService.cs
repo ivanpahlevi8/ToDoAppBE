@@ -89,6 +89,100 @@ namespace WebApplication1.Services
             }
         }
 
+        public async Task<ResponseDto> GetProjectPerformanceChart(string userId, int year)
+        {
+            try
+            {
+                // create current year date
+                var startDate = new DateTime(year, 1, 1);
+                var endDate = startDate.AddYears(1);
+
+                // get project as leader
+                var getProjectAsLeader = await _dbContext.Projects
+                    .Where(p => p.ProjectUserLeadId == userId)
+                    .Where(p => p.CreatedAt >= startDate && p.CreatedAt <= endDate)
+                    .GroupBy(p => new { p.CreatedAt.Year, p.CreatedAt.Month })
+                    .Select(grp => new ChartObjectDto { Year=grp.Key.Year, Month=grp.Key.Month, Count=grp.Count() })
+                    .ToListAsync();
+
+                // create project as a leader result
+                var getProjectAsLeaderResult = new List<ChartObjectDto>();
+
+                for(int i = 0; i <= 12; i++)
+                {
+                    // check is month exist on list
+                    bool isExist = getProjectAsLeader.Any(p => p.Month == i);
+
+                    if(!isExist)
+                    {
+                        var chartObject = new ChartObjectDto { Year = year, Month = i, Count = 0 };
+
+                        getProjectAsLeaderResult.Add(chartObject);
+                    } else
+                    {
+                        // get object
+                        var getChart = getProjectAsLeader.Where(p => p.Month == i).FirstOrDefault()!;
+
+                        getProjectAsLeaderResult.Add(getChart);
+                    }
+                }
+
+                // get project as member
+                var getProjectAsmember = await _dbContext.ProjectUserJunction
+                    .Where(puj => puj.UserId == userId)
+                    .Where(puj => puj.CreatedAt >= startDate && puj.CreatedAt <= endDate)
+                    .GroupBy(puj => new { puj.CreatedAt.Year, puj.CreatedAt.Month })
+                    .Select(puj => new ChartObjectDto { Year = puj.Key.Year, Month = puj.Key.Month, Count = puj.Count() })
+                    .ToListAsync();
+
+                // create project as member result
+                var getProjectAsMemberResult = new List<ChartObjectDto>();
+
+                for(int i = 1; i <= 12; i++)
+                {
+                    // check if data exist or not
+                    bool isDataExist = getProjectAsmember.Any(d => d.Month == i);
+
+                    if(!isDataExist)
+                    {
+                        var chartObject = new ChartObjectDto
+                        {
+                            Year = year,
+                            Month = i,
+                            Count = 0,
+                        };
+
+                        getProjectAsMemberResult.Add(chartObject);
+                    } else
+                    {
+                        // get month data
+                        var getData = getProjectAsmember.Where(d => d.Month == i).FirstOrDefault()!;
+
+                        getProjectAsMemberResult.Add(getData);
+                    }
+                }
+
+                // create project chart performance
+                ProjectChartPerformanceDto projectChartPerformance = new ProjectChartPerformanceDto();
+                projectChartPerformance.ProjectAsMember = getProjectAsMemberResult;
+                projectChartPerformance.ProjectLeads = getProjectAsLeaderResult;
+
+                _responseDto.IsSuccess = true;
+                _responseDto.Message = "Succes getting project chart";
+                _responseDto.Result = projectChartPerformance;
+
+                return _responseDto;
+            } catch (Exception ex)
+            {
+                string errMsg = "Error Happen : " + ex.Message + ", " + ex.InnerException?.Message;
+                _responseDto.IsSuccess = false;
+                _responseDto.Message = errMsg;
+                _responseDto.Result = null;
+
+                return _responseDto;
+            }
+        }
+
         public async Task<ResponseDto> GetToDoPerformanceChart(string userId, int year)
         {
             try
@@ -100,7 +194,7 @@ namespace WebApplication1.Services
                 // get on created todo
                 var onCreatedToDoData = await _dbContext.ToDo
                     .Where(t => t.CreatedById == userId)
-                    .Where(t => t.ItemState == "PROCESSED_TO_DO") // CREATED_TO_DO
+                    .Where(t => t.ItemState == "CREATED_TO_DO") // CREATED_TO_DO  PROCESSED_TO_DO
                     .Where(t => t.CreatedAt >= start && t.CreatedAt < end)
                     .GroupBy(t => new { t.CreatedAt.Year, t.CreatedAt.Month })
                     .Select(t => new ChartObjectDto { Year=t.Key.Year, Month=t.Key.Month, Count=t.Count()})
@@ -129,9 +223,83 @@ namespace WebApplication1.Services
                     }
                 }
 
+                // get on processed to do
+                var onProcessedToDoData = await _dbContext.ToDo
+                    .Where(t => t.CreatedById == userId)
+                    .Where(t => t.ItemState == "PROCESSED_TO_DO")
+                    .Where(t => t.CreatedAt >= start && t.CreatedAt <= end)
+                    .GroupBy(t => new { t.CreatedAt.Year, t.CreatedAt.Month })
+                    .Select(t => new ChartObjectDto { Year = t.Key.Year, Month = t.Key.Month, Count = t.Count() })
+                    .ToListAsync();
+
+                var onProcessedToDoDataResult = new List<ChartObjectDto>();
+
+                for(int i = 1; i <= 12; i++)
+                {
+                    bool isDataExist = onProcessedToDoData.Any(d => d.Month == i);
+
+                    if(!isDataExist)
+                    {
+                        var chartData = new ChartObjectDto
+                        {
+                            Year = year,
+                            Month = i,
+                            Count = 0,
+                        };
+
+                        onProcessedToDoDataResult.Add(chartData);
+                    } else
+                    {
+                        var getData = onProcessedToDoData.Where(d => d.Month == i).FirstOrDefault()!;
+
+                        onProcessedToDoDataResult.Add(getData);
+                    }
+                }
+
+                // get on finished to do
+                var onFinishedToDoData = await _dbContext.ToDo
+                    .Where(t => t.CreatedById == userId)
+                    .Where(t => t.ItemState == "FINISHED_TO_DO")
+                    .Where(t => t.CreatedAt >= start && t.CreatedAt <= end)
+                    .GroupBy(t => new { t.CreatedAt.Year, t.CreatedAt.Month })
+                    .Select(t => new ChartObjectDto { Year = t.Key.Year, Month = t.Key.Month, Count = t.Count() })
+                    .ToListAsync();
+
+                var onFinishedToDoDataResult = new List<ChartObjectDto>();
+
+                for(int i = 1; i <= 12; i++)
+                {
+                    bool isDataExist = onFinishedToDoData.Any(d => d.Month == i);
+
+                    if(!isDataExist)
+                    {
+                        var chartData = new ChartObjectDto
+                        {
+                            Year = year,
+                            Month = i,
+                            Count = 0,
+                        };
+
+                        onFinishedToDoDataResult.Add(chartData);
+                    } else
+                    {
+                        var getData = onFinishedToDoData.Where(d => d.Month == i).FirstOrDefault()!;
+
+                        onFinishedToDoDataResult.Add(getData);
+                    }
+                }
+
+                // create result object
+                ToDoChartPeformanceDto toDoChart = new ToDoChartPeformanceDto
+                {
+                    ToDoOnCreatedYear = resultList,
+                    ToDoOnProgressedYear = onProcessedToDoDataResult,
+                    ToDoOnFinishedYear = onFinishedToDoDataResult,
+                };
+
                 _responseDto.IsSuccess = true;
                 _responseDto.Message = "Success";
-                _responseDto.Result = resultList;
+                _responseDto.Result = toDoChart;
 
                 return _responseDto;
             } catch (Exception ex)
